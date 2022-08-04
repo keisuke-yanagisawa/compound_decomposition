@@ -36,7 +36,8 @@ namespace {
       ("output,o", value<std::string>(), "output (annotated) ligand file (.sdf file)")
       ("log", value<std::string>(), "log file")
       ("capping_atomic_num", value<int>()->default_value(6), "The atomic number of capping atoms")
-      ("enable_carbon_capping", bool_switch()->default_value(false), "Enabling capping even for Carbon atoms");
+      ("enable_carbon_capping", bool_switch()->default_value(false), "Enabling capping even for Carbon atoms")
+      ("ins_fragment_id", bool_switch()->default_value(false), "Enabling isotope number injection to mark fragment IDs");
     options_description desc;
     desc.add(options).add(hidden);
     variables_map vmap;
@@ -68,6 +69,7 @@ namespace {
     if (vmap.count("log"))        conf.log_file        = vmap["log"].as<std::string>();
     conf.capping_atomic_num = vmap["capping_atomic_num"].as<int>();
     conf.do_carbon_capping  = vmap["enable_carbon_capping"].as<bool>();
+    conf.insert_fragment_id_to_isotope = vmap["ins_fragment_id"].as<bool>();
 
     return conf;
   }
@@ -162,6 +164,24 @@ namespace {
 
 }
 
+void set_fragment_partition_info_into_isotopes(OpenBabel::OBMol& mol){
+  // this function will modify OBMol data inplace.
+  format::Converter conv;
+  fragdock::Molecule fmol = conv.toFragmentMol(mol);
+  std::vector<fragdock::Fragment> frags = fragdock::getFragments(fmol);
+
+  for(int i=0; i<frags.size(); i++){
+    fragdock::Fragment frag = frags[i];
+    for(int j=0; j<frag.getAtoms().size(); j++){
+      int atom_id = frag.getAtoms()[j].getId();
+      mol.GetAtom(atom_id+1)->SetIsotope(i+1); // 1-origin since 0 means no info of isotope
+    }
+  }
+
+}
+
+
+
 int main(int argc, char** argv){
 
   format::Converter conv;
@@ -189,6 +209,12 @@ int main(int argc, char** argv){
   std::vector<OpenBabel::OBMol> molecules = format::ParseFile(config.ligand_file);
   logs::lout << logs::info << "decomposite ligands into fragments";
   decomposite(molecules, frag_smi_list, annotated_mols, fragments, config.capping_atomic_num, config.do_carbon_capping);
+
+  if(config.insert_fragment_id_to_isotope){
+    for(int i=0; i<annotated_mols.size(); i++){
+      set_fragment_partition_info_into_isotopes(annotated_mols[i]);
+    }
+  }
 
   logs::lout << logs::info << "output ligands added fragment information at " << config.output_file;
   outputmolecules(annotated_mols, config.output_file);

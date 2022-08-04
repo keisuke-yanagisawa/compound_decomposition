@@ -17,6 +17,7 @@ namespace format {
     std::string log_file, forcefield_file, grid_folder, rotangs_file;
     int capping_atomic_num;
     bool do_carbon_capping;
+    bool insert_fragment_id_to_isotope;
   };
 
   DockingConfiguration ParseInFile(const char *filename);

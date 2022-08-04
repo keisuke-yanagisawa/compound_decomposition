@@ -26,3 +26,5 @@ RUN wget https://sourceforge.net/projects/openbabel/files/openbabel/${OBABEL_VER
     && cd build                                          \
     && cmake -DCMAKE_INSTALL_PREFIX=$OPEN_BABEL_ROOT ..  \
     && make -j8 install
+
+ENV OBABEL_INSTALL_PATH=$OPEN_BABEL_ROOT
