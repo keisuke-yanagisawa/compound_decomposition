@@ -1,0 +1,5 @@
+{
+    "runArgs": [],
+    "name": "compound_decomposition",
+    "dockerFile": "Dockerfile",
+}
