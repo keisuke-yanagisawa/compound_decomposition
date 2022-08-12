@@ -10,11 +10,11 @@ namespace {
 
 namespace fragdock {
   Fragment::Fragment(int id,
-		     const std::vector<FragmentEdge>& edges,
-		     const std::vector<Atom>& atoms,
-		     const std::vector<int>& near_id) : id(id),
-							edges(edges),
-							near_id(near_id){
+                     const std::vector<FragmentEdge>& edges,
+                     const std::vector<Atom>& atoms,
+                     const std::vector<int>& near_id) : id(id),
+                                                        edges(edges),
+                                                        near_id(near_id){
     this->atoms = atoms;
     //this->translate(-getCenter());
   }
@@ -31,8 +31,8 @@ namespace fragdock {
     Molecule::axisRotate(axis, theta, id_set);
     for(int i = 0; i < edges.size(); i++){
       if(exist_in(id_set, edges[i].from) 
-	 && exist_in(id_set, edges[i].to)){
-	edges[i].axisRotate(axis, theta);
+         && exist_in(id_set, edges[i].to)){
+        edges[i].axisRotate(axis, theta);
       }
     }
   }

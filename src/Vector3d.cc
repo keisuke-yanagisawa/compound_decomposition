@@ -62,9 +62,9 @@ namespace fragdock {
     for(int ord_id = 0; ord_id < ORDER_NUM; ord_id++) {
       int o = order[ord_id];
       for(int i = 0; i < 5; i++) {
-	poleB.axisRotate(poleA, 2.0*pi/5.0);
-	fltype theta = getAxisAngle(poleA, poleB);
-	rots.push_back(fragdock::Rotation(poleA, theta - base_theta));
+        poleB.axisRotate(poleA, 2.0*pi/5.0);
+        fltype theta = getAxisAngle(poleA, poleB);
+        rots.push_back(fragdock::Rotation(poleA, theta - base_theta));
       }
       poleB.axisRotate(poleA, 2.0*o*pi/5.0);
       poleA.axisRotate(poleB, 4.0*pi/3.0);

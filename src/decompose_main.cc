@@ -42,7 +42,7 @@ namespace {
     desc.add(options).add(hidden);
     variables_map vmap;
     store(command_line_parser(argc, argv).
-	  options(desc).positional(pos_desc).run(), vmap);
+          options(desc).positional(pos_desc).run(), vmap);
     notify(vmap);
 
 
@@ -52,11 +52,11 @@ namespace {
     bool help_mode = vmap.count("help");
     if (insufficient_input || help_mode){
       if (!help_mode){
-	std::cout << "too few arguments" << std::endl;
+        std::cout << "too few arguments" << std::endl;
       }
       
       std::cout << "Usage: " << argv[0] << "[options]" << std::endl
-		<< options << std::endl;
+                << options << std::endl;
       std::exit(0);
     }
     
@@ -95,11 +95,11 @@ namespace {
   }
 
   int decomposite(const std::vector<OpenBabel::OBMol>&  molecules,
-		        std::vector<std::string>&       frag_smi_list,
-		        std::vector<OpenBabel::OBMol>&  annotated_mols,
-		        std::vector<OpenBabel::OBMol>&  fragments,
-		        int                             capping_atomic_num = 6,
-		        bool                            capping_for_carbon = false){
+                        std::vector<std::string>&       frag_smi_list,
+                        std::vector<OpenBabel::OBMol>&  annotated_mols,
+                        std::vector<OpenBabel::OBMol>&  fragments,
+                        int                             capping_atomic_num = 6,
+                        bool                            capping_for_carbon = false){
 
     format::Converter conv;
 
@@ -110,18 +110,18 @@ namespace {
       std::vector<fragdock::Fragment> frags = fragdock::getFragments(mol);
       
       for(std::vector<fragdock::Fragment>::iterator fit=frags.begin(); fit!=frags.end(); ++fit){
-	OpenBabel::OBMol obmol = conv.toOBMol(*fit, molecules[i], capping_atomic_num, capping_for_carbon);
-	correctvalence(&obmol);
-	std::string smiles = obmol2Smiles(obmol);
-	frag_smiles.push_back(smiles);
-	obmol.SetTitle(smiles);
-	
-	if(std::find(frag_smi_list.begin(), frag_smi_list.end(), smiles) == frag_smi_list.end()){
-	  frag_smi_list.push_back(smiles);
-	  fragments.push_back(obmol);
-	}
+        OpenBabel::OBMol obmol = conv.toOBMol(*fit, molecules[i], capping_atomic_num, capping_for_carbon);
+        correctvalence(&obmol);
+        std::string smiles = obmol2Smiles(obmol);
+        frag_smiles.push_back(smiles);
+        obmol.SetTitle(smiles);
+        
+        if(std::find(frag_smi_list.begin(), frag_smi_list.end(), smiles) == frag_smi_list.end()){
+          frag_smi_list.push_back(smiles);
+          fragments.push_back(obmol);
+        }
 
-	int frag_num = (std::find(frag_smi_list.begin(), frag_smi_list.end(), smiles) - frag_smi_list.begin());
+        int frag_num = (std::find(frag_smi_list.begin(), frag_smi_list.end(), smiles) - frag_smi_list.begin());
       }
 
       // add fragment info to molecules
@@ -134,7 +134,7 @@ namespace {
 
       // show progress
       if((i+1)%1000==0){
-	logs::lout << logs::info << (i+1) << " compounds were finished to decompose. The number of fragments is " << fragments.size();
+        logs::lout << logs::info << (i+1) << " compounds were finished to decompose. The number of fragments is " << fragments.size();
       }
     }
 
@@ -142,7 +142,7 @@ namespace {
   }
 
   void outputmolecules(const std::vector<OpenBabel::OBMol>& molecules,
-		       const std::string& filename){
+                       const std::string& filename){
 
     std::ofstream fout(filename.c_str());
     if(fout.fail()){
@@ -154,8 +154,8 @@ namespace {
     std::string ext = utils::GetExtension(filename);
     obconv.SetOutFormat(utils::GetExtension(filename).c_str());
     for(std::vector<OpenBabel::OBMol>::const_iterator mit=molecules.begin();
-	mit != molecules.end();
-	mit++){
+        mit != molecules.end();
+        mit++){
       obconv.Write(&(const_cast<OpenBabel::OBMol&>(*mit)), &fout);
     }
 

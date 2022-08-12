@@ -40,7 +40,7 @@ namespace utils{
     std::vector<std::vector<int> > sets = this->getSets();
     for(int i=0; i<sets.size(); i++){
       for(int j=0; j<sets[i].size(); j++){
-	std::cout << j << " ";
+        std::cout << j << " ";
       }
       std::cout << std::endl;
     }

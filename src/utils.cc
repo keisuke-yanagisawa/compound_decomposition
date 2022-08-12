@@ -31,17 +31,17 @@ namespace utils {
       ext = path.substr(pos1+1, path.size()-pos1);
       std::string::iterator itr = ext.begin();
       while(itr != ext.end()){
-	*itr = tolower(*itr);
-	itr++;
+        *itr = tolower(*itr);
+        itr++;
       }
       itr = ext.end()-1;
       while(itr != ext.begin()){ 
-	if(*itr == 0 || *itr == 32){
-	  ext.erase(itr--);
-	}
-	else{
-	  itr--;
-	}
+        if(*itr == 0 || *itr == 32){
+          ext.erase(itr--);
+        }
+        else{
+          itr--;
+        }
       }
     }
     return ext;
@@ -51,8 +51,8 @@ namespace utils {
     time_t timer = time(NULL);
     tm* date = localtime(&timer);
     std::string dateStr = (boost::format("%02d_%02d_%02d_%02d_%02d") 
-			   % date->tm_mon % date->tm_mday
-			   % date->tm_hour % date->tm_min % date-> tm_sec).str();
+                           % date->tm_mon % date->tm_mday
+                           % date->tm_hour % date->tm_min % date-> tm_sec).str();
     return dateStr;    
   }
 
