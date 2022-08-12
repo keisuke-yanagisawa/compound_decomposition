@@ -33,33 +33,33 @@ DECOMPOSE_OBJS = $(patsubst %,objs/%,$(_DECOMPOSE_OBJS))
 all: $(ALL)
 
 objs:
-  mkdir -p objs
+	mkdir -p objs
 
 decompose: $(DECOMPOSE_OBJS)
-  $(CXX)  $(CXXFLAGS) -o $@ $^ $(OPENBABELLP) $(BOOSTLP) -lboost_regex -lboost_program_options -lopenbabel
+	$(CXX)  $(CXXFLAGS) -o $@ $^ $(OPENBABELLP) $(BOOSTLP) -lboost_regex -lboost_program_options -lopenbabel
 
 
 
 objs/UnionFindTree.o: src/UnionFindTree.cc src/UnionFindTree.hpp
-  $(CXX)  $(CXXFLAGS) $(BOOSTIP) -o $@ -c $<
+	$(CXX)  $(CXXFLAGS) $(BOOSTIP) -o $@ -c $<
 
 objs/decompose_main.o: src/decompose_main.cc
-  $(CXX)  $(CXXFLAGS) $(BOOSTIP) $(OPENBABELIP) -o $@ -c $< 
+	$(CXX)  $(CXXFLAGS) $(BOOSTIP) $(OPENBABELIP) -o $@ -c $< 
 
 objs/paramAD_reader.o: src/paramAD_reader.cc
-  $(CXX)  $(CXXFLAGS) $(BOOSTIP) -o $@ -c $<
+	$(CXX)  $(CXXFLAGS) $(BOOSTIP) -o $@ -c $<
 
 objs/Vector3d.o: src/Vector3d.cc src/Vector3d.hpp src/common.hpp
-  $(CXX)  $(CXXFLAGS) $(BOOSTIP) -o $@ -c $<
+	$(CXX)  $(CXXFLAGS) $(BOOSTIP) -o $@ -c $<
 
 objs/AtomType.o: src/AtomType.cc src/AtomType.hpp src/common.hpp
-  $(CXX)  $(CXXFLAGS) $(BOOSTIP) -o $@ -c $<
+	$(CXX)  $(CXXFLAGS) $(BOOSTIP) -o $@ -c $<
 
 objs/%.o: src/%.cc src/%.hpp src/common.hpp 
-  $(CXX)  $(CXXFLAGS) $(BOOSTIP) $(OPENBABELIP) -o $@ -c $<
+	$(CXX)  $(CXXFLAGS) $(BOOSTIP) $(OPENBABELIP) -o $@ -c $<
 
 objs/%.o: src/%.cc src/common.hpp 
-  $(CXX)  $(CXXFLAGS) $(BOOSTIP) $(OPENBABELIP) -o $@ -c $<
+	$(CXX)  $(CXXFLAGS) $(BOOSTIP) $(OPENBABELIP) -o $@ -c $<
 
 clean:
-  rm -rf $(ALL)
+	rm -rf $(ALL)
