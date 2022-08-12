@@ -56,9 +56,11 @@ namespace format {
     }
     fragdock::Molecule mol(fatoms);
     for(int i = 0; i < obmol.NumBonds(); i++){
+      // all bonds in aromatic rings are IsRotor(false)=false / IsRotor(true)=true
+      // all bonds in aromatic rings are IsRotor(false)=false / IsRotor(true)=false
       mol.append(fragdock::Bond(obmol.GetBond(i)->GetBeginAtom()->GetId(),
                                 obmol.GetBond(i)->GetEndAtom()->GetId(),
-                                obmol.GetBond(i)->IsRotor(false) ));
+                                obmol.GetBond(i)->IsRotor(true) ));
     }
 
     return mol;

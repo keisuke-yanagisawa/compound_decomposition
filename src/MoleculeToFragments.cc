@@ -8,27 +8,42 @@ namespace {
   using namespace fragdock;
 
   vector<vector<int> > edges;
-  vector<int> ring;
+  vector<vector<int>> rings;
   vector<int> route;
   vector<bool> done;
   
   void dfs(int now, int start) {
-    if(done[now]) {
-      if(now == start and route.size() > 2) {
-        ring = route;
-      }
+    /*
+      depth-first search function of ringDetector()
+      it finds all rings in a molecule
+      if a molecule has fused rings, all (small and large) rings are found
+    */
+
+    if(now == start and route.size() > 2) { // the path length of > 2 means there is a cycle path including start
+      //CAUTION: route is not defined in dfs() function, and refer to a global variable
+      rings.push_back(route);
+    }
+    if(done[now]) { // atom id = now has already been visited
       return;
     }
-    done[now] = true;
-    
+
     route.push_back(now);
+    done[now] = true;
+
     for(int i = 0; i < edges[now].size(); i++)
       dfs(edges[now][i], start);
     
     route.pop_back();
+    done[now] = false;
   }
   
   vector<vector<int> > ringDetector(int atom_num, const vector<Bond> &bonds) {
+    /*
+      detect all rings in a (sub)structure
+      return a vector of vector of atom ids of all rings
+    */
+
+    // construct an adjacency list
     edges = vector<vector<int> >(atom_num, vector<int>());
     for(int i = 0; i < bonds.size(); i++) {
       const Bond &bond = bonds[i];
@@ -41,10 +56,12 @@ namespace {
     vector<vector<int> > ret;
     for(int i = 0; i < atom_num; i++) {
       done = vector<bool>(atom_num, false);
-      ring = vector<int>();
+      rings = vector<vector<int>>();
       route = vector<int>();
       dfs(i, i);
-      if(ring.size() > 0) ret.push_back(ring);
+      for(auto elem: rings) {
+        ret.push_back(elem);
+      }
     }
     
     return ret;
@@ -77,31 +94,54 @@ namespace {
 }
 
 namespace fragdock {
-  vector<Fragment> getFragments(const Molecule &mol) {
+  vector<Fragment> getFragments(const Molecule &mol, int max_ring_size) {
+    // default max_ring_size is -1, which means no limit on ring size
+
     const vector<Atom> &atoms = mol.getAtoms();
     const vector<Bond> &bonds = mol.getBonds();
-    // unite two atoms if the bond between them is NOT 'Single'
+    // unite two atoms if the bond between them is not rotatable
     utils::UnionFindTree uf((int)atoms.size());
     for(int i = 0; i < bonds.size(); i++) {
       const Bond &bond = bonds[i];
       int a = bond.atom_id1;
       int b = bond.atom_id2;
-      if(!bond.is_rotor 
+      if(!bond.is_rotor
          && atoms[bond.atom_id1].getType().getName().find("H") != 0
          && atoms[bond.atom_id2].getType().getName().find("H") != 0)
-        uf.unite(a, b);      
+        uf.unite(a, b);
+    }
+
+    // unite atoms in an aliphatic ring which size is below given threshold
+    vector<vector<int> > rings = ringDetector((int)atoms.size(), bonds);
+    for(int i = 0; i < rings.size(); i++) {
+      if (max_ring_size != -1 and rings[i].size() > max_ring_size) continue;
+      int a = rings[i][0];
+      for(int j = 1; j < rings[i].size(); j++) {
+        int b = rings[i][j];
+        uf.unite(a, b);
+      }
     }
 
     // test internal rotation invariant
+    // check the rotation invariancy by actually rotated a bond
     for(int i=0; i<bonds.size(); i++){
       //std::cout << "test" << i << " " << bonds[i] << std::endl;
       // generate connected molecule
       const Bond &bond = bonds[i];
       int a = bond.atom_id1;
       int b = bond.atom_id2;
+
+      // bonds connected to hydrogen atoms will not be treated
       if(atoms[a].getType().getName().find("H") == 0
          || atoms[b].getType().getName().find("H") == 0) continue;
+
+      // check if already united
       if(uf.same(a,b)) continue; // no longer needed to do anything
+
+      // try to unite atoms a and b
+      // united_set: a set of atom ids in a (sub) fragment which includes a and b 
+      // prev_set_a: a set of atom ids in a (sub) fragment which includes only a and not b
+      // prev_set_b: a set of atom ids in a (sub) fragment which includes only b and not a
       utils::UnionFindTree uf_temp(uf);
       uf_temp.unite(a, b);
       const std::vector<std::vector<int> > prev_sets = uf.getSets();
@@ -137,6 +177,7 @@ namespace fragdock {
 
       bool ok = true; // is it ok to merge?
       // internal rotation test
+      // check the rotation invariancy by actually rotated it
       for(int j=0; j<united_mol.getBonds().size(); j++){
         Molecule test_united_mol;
         test_united_mol.append(united_mol);
