@@ -28,3 +28,7 @@ RUN wget https://sourceforge.net/projects/openbabel/files/openbabel/${OBABEL_VER
     && make -j8 install
 
 ENV OBABEL_INSTALL_PATH=$OPEN_BABEL_ROOT
+
+# change permission to read ssh settings if exists
+RUN chown root:$USER /root/.ssh/config || true
+RUN chmod 600        /root/.ssh/config || true
