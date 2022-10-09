@@ -35,7 +35,7 @@ namespace {
       ("ligand,l", value<std::string>(), "ligand file")
       ("output,o", value<std::string>(), "output (annotated) ligand file (.sdf file)")
       ("log", value<std::string>(), "log file")
-      ("capping_atomic_num", value<int>()->default_value(6), "The atomic number of capping atoms")
+      ("capping_atomic_num", value<int>()->default_value(-1), "The atomic number of capping atoms. No capping if it is set to -1")
       ("enable_carbon_capping", bool_switch()->default_value(false), "Enabling capping even for Carbon atoms")
       ("ins_fragment_id", bool_switch()->default_value(false), "Enabling isotope number injection to mark fragment IDs");
     options_description desc;
