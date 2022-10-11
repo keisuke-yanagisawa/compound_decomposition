@@ -8,7 +8,7 @@ namespace {
   using namespace fragdock;
 
   vector<vector<int> > edges;
-  vector<vector<int>> rings;
+  vector<vector<int> > rings;
   vector<int> route;
   vector<bool> done;
   
@@ -56,7 +56,7 @@ namespace {
     vector<vector<int> > ret;
     for(int i = 0; i < atom_num; i++) {
       done = vector<bool>(atom_num, false);
-      rings = vector<vector<int>>();
+      rings = vector<vector<int> >();
       route = vector<int>();
       dfs(i, i);
       for(auto elem: rings) {
