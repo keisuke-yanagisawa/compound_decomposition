@@ -5,6 +5,8 @@
 #define MOLECULE_TO_FRAGMENTS_H_
 
 namespace fragdock {
-  std::vector<Fragment> getFragments(const Molecule &mol, int max_ring_size=-1);
+  std::vector<Fragment> getFragments(const Molecule &mol, 
+                                     int max_ring_size=-1,
+                                     bool merge_solitary=true);
 }
 #endif

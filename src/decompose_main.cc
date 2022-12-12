@@ -38,7 +38,9 @@ namespace {
       ("capping_atomic_num", value<int>()->default_value(-1), "The atomic number of capping atoms. No capping if it is set to -1")
       ("enable_carbon_capping", bool_switch()->default_value(false), "Enabling capping even for Carbon atoms")
       ("ins_fragment_id", bool_switch()->default_value(false), "Enabling isotope number injection to mark fragment IDs")
-      ("max_ring_size", value<int>()->default_value(-1), "Maximum ring size");
+      ("max_ring_size", value<int>()->default_value(-1), "Maximum ring size")
+      ("no_merge_solitary", bool_switch()->default_value(false), "Disabling merging of solitary fragments");
+
     options_description desc;
     desc.add(options).add(hidden);
     variables_map vmap;
@@ -72,6 +74,7 @@ namespace {
     conf.do_carbon_capping  = vmap["enable_carbon_capping"].as<bool>();
     conf.insert_fragment_id_to_isotope = vmap["ins_fragment_id"].as<bool>();
     conf.max_ring_size = vmap["max_ring_size"].as<int>();
+    conf.merge_solitary = !vmap["no_merge_solitary"].as<bool>();
 
     return conf;
   }
@@ -102,7 +105,8 @@ namespace {
                         std::vector<OpenBabel::OBMol>&  fragments,
                         int                             capping_atomic_num = 6,
                         bool                            capping_for_carbon = false,
-                        int                             max_ring_size = -1){
+                        int                             max_ring_size = -1,
+                        bool                            merge_solitary = true){
 
     format::Converter conv;
 
@@ -110,7 +114,7 @@ namespace {
     for(int i=0; i<molecules.size(); ++i){
       std::vector<std::string> frag_smiles;
       fragdock::Molecule mol = conv.toFragmentMol(molecules[i]);
-      std::vector<fragdock::Fragment> frags = fragdock::getFragments(mol, max_ring_size);
+      std::vector<fragdock::Fragment> frags = fragdock::getFragments(mol, max_ring_size, merge_solitary);
       
       for(std::vector<fragdock::Fragment>::iterator fit=frags.begin(); fit!=frags.end(); ++fit){
         OpenBabel::OBMol obmol = conv.toOBMol(*fit, molecules[i], capping_atomic_num, capping_for_carbon);
@@ -211,7 +215,7 @@ int main(int argc, char** argv){
   logs::lout << logs::info << "parse ligand file: " << config.ligand_file;
   std::vector<OpenBabel::OBMol> molecules = format::ParseFile(config.ligand_file);
   logs::lout << logs::info << "decomposite ligands into fragments";
-  decomposite(molecules, frag_smi_list, annotated_mols, fragments, config.capping_atomic_num, config.do_carbon_capping, config.max_ring_size);
+  decomposite(molecules, frag_smi_list, annotated_mols, fragments, config.capping_atomic_num, config.do_carbon_capping, config.max_ring_size, config.merge_solitary);
 
   if(config.insert_fragment_id_to_isotope){
     for(int i=0; i<annotated_mols.size(); i++){

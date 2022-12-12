@@ -94,11 +94,13 @@ namespace {
 }
 
 namespace fragdock {
-  vector<Fragment> getFragments(const Molecule &mol, int max_ring_size) {
+  vector<Fragment> getFragments(const Molecule &mol, int max_ring_size,
+                                bool merge_solitary) {
     // default max_ring_size is -1, which means no limit on ring size
 
     const vector<Atom> &atoms = mol.getAtoms();
     const vector<Bond> &bonds = mol.getBonds();
+
     // unite two atoms if the bond between them is not rotatable
     utils::UnionFindTree uf((int)atoms.size());
     for(int i = 0; i < bonds.size(); i++) {
@@ -125,6 +127,9 @@ namespace fragdock {
     // test internal rotation invariant
     // check the rotation invariancy by actually rotated a bond
     for(int i=0; i<bonds.size(); i++){
+      if(merge_solitary==false)
+        break;
+
       //std::cout << "test" << i << " " << bonds[i] << std::endl;
       // generate connected molecule
       const Bond &bond = bonds[i];
@@ -137,6 +142,7 @@ namespace fragdock {
 
       // check if already united
       if(uf.same(a,b)) continue; // no longer needed to do anything
+
 
       // try to unite atoms a and b
       // united_set: a set of atom ids in a (sub) fragment which includes a and b 

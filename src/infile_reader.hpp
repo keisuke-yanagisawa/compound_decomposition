@@ -19,6 +19,7 @@ namespace format {
     bool do_carbon_capping;
     bool insert_fragment_id_to_isotope;
     int max_ring_size;
+    bool merge_solitary;
   };
 
   DockingConfiguration ParseInFile(const char *filename);
