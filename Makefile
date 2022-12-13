@@ -1,12 +1,11 @@
 CXX=g++
-CXXFLAGS= -O2
 BOOST_INSTALL_PATH ?= /usr
 OBABEL_INSTALL_PATH ?= /usr
 
 ifeq ($(Debug),Y) 
-CXXFLAGS = -g -O0 
+CXXFLAGS += -g -O0 
 else
-CXXFLAGS = -O2 
+CXXFLAGS += -O2 
 endif
 
 ifeq ($(Symbols),Y)

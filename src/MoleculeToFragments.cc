@@ -59,7 +59,7 @@ namespace {
       rings = vector<vector<int> >();
       route = vector<int>();
       dfs(i, i);
-      for(auto elem: rings) {
+      for(vector<int> elem: rings) {
         ret.push_back(elem);
       }
     }
