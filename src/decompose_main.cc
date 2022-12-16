@@ -171,11 +171,13 @@ namespace {
 
 }
 
-void set_fragment_partition_info_into_isotopes(OpenBabel::OBMol& mol, int max_ring_size=-1){
+void set_fragment_partition_info_into_isotopes(OpenBabel::OBMol& mol, 
+                        int  max_ring_size=-1,
+                        bool merge_solitary = true){
   // this function will modify OBMol data inplace.
   format::Converter conv;
   fragdock::Molecule fmol = conv.toFragmentMol(mol);
-  std::vector<fragdock::Fragment> frags = fragdock::getFragments(fmol, max_ring_size);
+  std::vector<fragdock::Fragment> frags = fragdock::getFragments(fmol, max_ring_size, merge_solitary);
 
   for(int i=0; i<frags.size(); i++){
     fragdock::Fragment frag = frags[i];
@@ -220,7 +222,7 @@ int main(int argc, char** argv){
   if(config.insert_fragment_id_to_isotope){
     for(int i=0; i<annotated_mols.size(); i++){
       // this code should be included in decomposite() function.
-      set_fragment_partition_info_into_isotopes(annotated_mols[i], config.max_ring_size);
+      set_fragment_partition_info_into_isotopes(annotated_mols[i], config.max_ring_size, config.merge_solitary);
     }
   }
 
