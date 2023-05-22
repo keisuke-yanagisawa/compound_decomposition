@@ -18,14 +18,12 @@ ENV OPEN_BABEL_ROOT=$HOME/.local/openbabel-${OBABEL_VERSION}
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$OPEN_BABEL_ROOT/lib
 
 # installation of openbabel version 2.4.1
-RUN wget https://sourceforge.net/projects/openbabel/files/openbabel/${OBABEL_VERSION}/openbabel-${OBABEL_VERSION}.tar.gz/download \
-        -O openbabel-${OBABEL_VERSION}.tar.gz            \
-    && tar -zxvf openbabel-${OBABEL_VERSION}.tar.gz      \
-    && cd openbabel-${OBABEL_VERSION}                    \
-    && mkdir -p build                                    \
-    && cd build                                          \
-    && cmake -DCMAKE_INSTALL_PREFIX=$OPEN_BABEL_ROOT ..  \
-    && make -j8 install
+RUN wget https://sourceforge.net/projects/openbabel/files/openbabel/${OBABEL_VERSION}/openbabel-${OBABEL_VERSION}.tar.gz/download -O openbabel-${OBABEL_VERSION}.tar.gz
+RUN tar -zxvf openbabel-${OBABEL_VERSION}.tar.gz
+RUN mkdir -p openbabel-${OBABEL_VERSION}/build 
+RUN cd openbabel-${OBABEL_VERSION}/build && \
+    cmake -DCMAKE_INSTALL_PREFIX=$OPEN_BABEL_ROOT -DCMAKE_CXX_FLAGS="-Wno-narrowing" ..
+RUN cd openbabel-${OBABEL_VERSION}/build && make -j8 install
 
 ENV OBABEL_INSTALL_PATH=$OPEN_BABEL_ROOT
 
